@@ -14,9 +14,10 @@ def main():
     IMG_COLS = 28
 
     new_model = tf.keras.models.load_model('the_best_around.model')
-    characters = getHandwriting()
-    num_images = characters.shape[0]
-    x_shaped_array = characters.reshape(num_images, IMG_ROWS, IMG_COLS, 1)
+    characters = np.array(getHandwriting())
+    #print(characters)
+    #num_images = characters.shape[0]
+    x_shaped_array = characters.reshape(1, IMG_ROWS, IMG_COLS, 1)
     out_x = x_shaped_array / 255
     makePrediction(new_model, out_x)
 
@@ -24,7 +25,7 @@ def getHandwriting():
 
     # https://stackoverflow.com/questions/40727793/how-to-convert-a-grayscale-image-into-a-list-of-pixel-values
 
-    img = Image.open(r'C:\Users\loofa\Desktop\TestHiragana\wo.png').convert('L')  # convert image to 8-bit grayscale
+    img = Image.open(r'C:\Users\loofa\Desktop\TestHiragana\ki.png').convert('L')  # convert image to 8-bit grayscale
     WIDTH, HEIGHT = img.size
 
     data = list(img.getdata())  # convert image data to a list of integers
@@ -37,19 +38,23 @@ def getHandwriting():
     # For example:
     for row in data:
         for value in row:
-            print(str(255 - value) + " ", end="")
+            print('{:3}'.format(255 - value) + " ", end="")
+        print("\n")
             # print(' '.join('{:3}'.format(255-value) for value in row))
 
     return data
 
 def makePrediction(new_model, characters):
 
-    CATEGORIES = ["O", "KI", "SU", "TSU", "NA", "HA", "MA", "YA", "RE", "WO"]
+    # Japanese Hiragana Array
+    japaneseCharacters = ["\u304A", "\u304D", "\u3059", "\u3064", "\u306A", "\u306F", "\u307E", "\u3084", "\u308C", "\u3093"]
 
-    predictions = new_model.predict(characters)
-    print(CATEGORIES[int(predictions[0][0])])
+    # Prediction
+    predictions = new_model.predict_classes(characters)
+    print('Prediction:  ', predictions)
 
 
 main()
+
 
 #  https://stackoverflow.com/questions/49070242/converting-images-to-csv-file-in-python
