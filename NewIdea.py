@@ -1,5 +1,6 @@
 # import statements here
-from PIL import Image
+import numpy as np
+import cv2
 
 def main():
 
@@ -66,16 +67,16 @@ def getCharacterStrokes():
     hiraganaStrokes = []
 
     try:
-        horizontalTop = Image.open(r'C:\Users\loofa\Desktop\TestHiragana\HiraganaStrokes\horizontaltop.png')
-        abody = Image.open(r'C:\Users\loofa\Desktop\TestHiragana\HiraganaStrokes/abody.png')
-        abottom = Image.open(r'C:\Users\loofa\Desktop\TestHiragana\HiraganaStrokes/abottom.png')
-        ileft = Image.open(r'C:\Users\loofa\Desktop\TestHiragana\HiraganaStrokes/ileft.png')
-        iright = Image.open(r'C:\Users\loofa\Desktop\TestHiragana\HiraganaStrokes/iright.png')
-        smallhorizontaltop = Image.open(r'C:\Users\loofa\Desktop\TestHiragana\HiraganaStrokes/smallhorizontaltop.png')
-        ubody = Image.open(r'C:\Users\loofa\Desktop\TestHiragana\HiraganaStrokes/ubody.png')
-        ebody = Image.open(r'C:\Users\loofa\Desktop\TestHiragana\HiraganaStrokes/ebody.png')
-        obody = Image.open(r'C:\Users\loofa\Desktop\TestHiragana\HiraganaStrokes/obody.png')
-        odash = Image.open(r'C:\Users\loofa\Desktop\TestHiragana\HiraganaStrokes/odash.png')
+        horizontalTop = cv2.imread(r'C:\Users\loofa\Desktop\TestHiragana\HiraganaStrokes\horizontaltop.png')
+        abody = cv2.imread(r'C:\Users\loofa\Desktop\TestHiragana\HiraganaStrokes/abody.png')
+        abottom = cv2.imread(r'C:\Users\loofa\Desktop\TestHiragana\HiraganaStrokes/abottom.png')
+        ileft = cv2.imread(r'C:\Users\loofa\Desktop\TestHiragana\HiraganaStrokes/ileft.png')
+        iright = cv2.imread(r'C:\Users\loofa\Desktop\TestHiragana\HiraganaStrokes/iright.png')
+        smallhorizontaltop = cv2.imread(r'C:\Users\loofa\Desktop\TestHiragana\HiraganaStrokes/smallhorizontaltop.png')
+        ubody = cv2.imread(r'C:\Users\loofa\Desktop\TestHiragana\HiraganaStrokes/ubody.png')
+        ebody = cv2.imread(r'C:\Users\loofa\Desktop\TestHiragana\HiraganaStrokes/ebody.png')
+        obody = cv2.imread(r'C:\Users\loofa\Desktop\TestHiragana\HiraganaStrokes/obody.png')
+        odash = cv2.imread(r'C:\Users\loofa\Desktop\TestHiragana\HiraganaStrokes/odash.png')
 
     except IOError:
         pass
@@ -141,15 +142,66 @@ def combineStrokes(character, hiraganaStrokes):
 
 def quizStudent(hiraganaVowels):
 
-    usrCount = int(input("How many strokes are in the character ", hiraganaVowels[0].character, "? \n"))
+    # correct/incorrect flag
+    correct = True
+
+    print("How many strokes are in the character", hiraganaVowels[0].character, "? \n")
+    usrCount = int(input("Strokes: "))
+
+    # test data
+
+    # correct stroke order
+    correctOrder = hiraganaVowels[0].strokeOrder
+
+    # all wrong stroke order
+    incorrectOrder = []
+
+    ileft = cv2.imread(r'C:\Users\loofa\Desktop\TestHiragana\HiraganaStrokes/ileft.png')
+    iright = cv2.imread(r'C:\Users\loofa\Desktop\TestHiragana\HiraganaStrokes/iright.png')
+    smallhorizontaltop = cv2.imread(r'C:\Users\loofa\Desktop\TestHiragana\HiraganaStrokes/smallhorizontaltop.png')
+    incorrectOrder.append(ileft)
+    incorrectOrder.append(iright)
+    incorrectOrder.append(smallhorizontaltop)
+
 
     if hiraganaVowels[0].strokeCount == usrCount:
 
         print("Correct!")
+        result = compareImages(incorrectOrder, hiraganaVowels[0].strokeOrder)
+
+        if result > 0:
+
+            correct = False
+            print("Incorrect stroke order")
+
+        else:
+
+            correct = True
+            print("Correct stroke order")
 
     else:
 
         print("You suck.")
+
+
+def compareImages(usrOrder, correctOrder):
+
+    for i in range(len(usrOrder)):
+
+        imageA = usrOrder[i]
+        imageB = correctOrder[i]
+
+        # the 'Mean Squared Error' between the two images is the
+        # sum of the squared difference between the two images;
+        # NOTE: the two images must have the same dimension
+        err = np.sum((imageA.astype("float") - imageB.astype("float")) ** 2)
+        err /= float(imageA.shape[0] * imageA.shape[1])
+
+        # return the MSE, the lower the error, the more "similar"
+        # the two images are
+
+        print(err)
+        return err
 
 
 main()
