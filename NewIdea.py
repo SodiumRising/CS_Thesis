@@ -186,6 +186,8 @@ def quizStudent(hiraganaVowels):
 
 def compareImages(usrOrder, correctOrder):
 
+    sum = 0
+
     for i in range(len(usrOrder)):
 
         imageA = usrOrder[i]
@@ -200,8 +202,9 @@ def compareImages(usrOrder, correctOrder):
         # return the MSE, the lower the error, the more "similar"
         # the two images are
 
-        print(err)
-        return err
+        sum += err
+
+    return sum
 
 
 main()
