@@ -4,7 +4,7 @@ from PIL import Image
 def main():
 
     hiraganaVowels = buildCharacters()
-
+    quizStudent(hiraganaVowels)
 
 def buildCharacters():
 
@@ -137,6 +137,19 @@ def combineStrokes(character, hiraganaStrokes):
         return strokeOrder
 
     strokeOrder.clear()
+
+
+def quizStudent(hiraganaVowels):
+
+    usrCount = int(input("How many strokes are in the character ", hiraganaVowels[0].character, "? \n"))
+
+    if hiraganaVowels[0].strokeCount == usrCount:
+
+        print("Correct!")
+
+    else:
+
+        print("You suck.")
 
 
 main()
